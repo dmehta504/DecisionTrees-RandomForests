@@ -247,12 +247,12 @@ def gini_gain(previous_classes, current_classes):
     """
     g_impurity_previous = gini_impurity(previous_classes)
 
-    # Calculate size of future splits
+    # Calculate the total size of future classes
     total = 0.0
     for i in range(len(current_classes)):
         total = total + len(current_classes[i])
 
-    # Calculate gini impurity of each future split
+    # Calculate gini impurity of each future class (split)
     gain = 0.0
     for i in range(len(current_classes)):
         g_impurity = gini_impurity(current_classes[i])
@@ -295,7 +295,53 @@ class DecisionTree:
         """
 
         # TODO: finish this.
+        # Check for termination
+
+        # No more samples left i.e. no more X values remaining
+        if features.shape[0] == 0:
+            return DecisionNode(None, None, None, None)
+
+        # If all classes are the same, then return the class
+        if np.unique(classes).shape[0] == 1:
+            return DecisionNode(None, None, None, classes[0])
+
+        # If max depth reached, then return most frequent class
+        if depth == self.depth_limit:
+            class_values, class_count = np.unique(classes, return_counts=True)
+            most_frequent_index = np.argmax(class_count)
+            return DecisionNode(None, None, None, class_values[most_frequent_index])
+
+        else:
+            best_index = self.select_splitval(features, classes)
+            alpha_best = np.mean(features[:, best_index])
+
+            root = DecisionNode(None, None, lambda feature: feature[best_index] <= alpha_best)
+            left_index = np.where(features[:, best_index] <= alpha_best)
+            right_index = np.where(features[:, best_index] > alpha_best)
+            root.left = self.__build_tree__(features[left_index], classes[left_index], depth + 1)
+            root.right = self.__build_tree__(features[right_index], classes[right_index], depth + 1)
+            return root
         # raise NotImplemented()
+
+    def select_splitval(self, features, classes):
+        gain = []
+        dataset = np.column_stack((features, classes))
+        previous_classes = map(int, dataset[:, -1].tolist())
+        for i in range(len(dataset[0, :]) - 1):
+            feature = dataset[:, [i, -1]]
+            split = np.mean(feature[:, 0])
+            left_split = feature[feature[:, 0] <= split]
+            right_split = feature[feature[:, 0] > split]
+            current_classes = [map(int, left_split[:, -1].tolist()), map(int, right_split[:, -1].tolist())]
+            gain.append(gini_gain(previous_classes, current_classes))
+
+        best_index = np.argmax(gain)
+        return best_index
+
+
+
+
+
 
     def classify(self, features):
         """Use the fitted tree to classify a list of example features.
