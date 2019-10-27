@@ -350,7 +350,10 @@ class Vectorization:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        data_np = np.array(data)
+        data = (data_np * data_np) + data_np
+        return data
+        # raise NotImplemented()
 
     def non_vectorized_slice(self, data):
         """Find row with max sum using loops.
@@ -386,7 +389,12 @@ class Vectorization:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        data_np = np.array(data)
+        data_np_slice = data_np[0:100, :]
+        data_np_slice = np.sum(data_np_slice, axis=1)  # Sum along all each row in the slice
+
+        return (data_np_slice[np.argmax(data_np_slice)], np.argmax(data_np_slice))
+        # raise NotImplemented()
 
     def non_vectorized_flatten(self, data):
         """Display occurrences of positive numbers using loops.
@@ -422,9 +430,19 @@ class Vectorization:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        data_np_flat = np.array(data).flatten()
+        data_positive = data_np_flat[data_np_flat > 0.0]
+        values, number_of_occurrences = np.unique(data_positive, return_counts=True)
+        list_of_occurences = []
+        for i in range(len(values)):
+            list_of_occurences.append((values[i], number_of_occurrences[i]))
+
+        return list_of_occurences
+        # raise NotImplemented()
+
 
 def return_your_name():
     # return your name
     # TODO: finish this
-    raise NotImplemented()
+    return "Dhruv Mehta"
+    # raise NotImplemented()
