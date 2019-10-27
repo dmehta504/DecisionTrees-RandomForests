@@ -127,6 +127,27 @@ def confusion_matrix(classifier_output, true_labels):
     """
 
     # TODO: finish this.
+    # Creates a 2x2 array
+    # [0 , 0
+    #  0,  0]
+    matrix = np.array([[0, 0], [0, 0]])
+
+    for i in range(len(classifier_output)):
+        # If we classify correctly check for True Positive or True Negative
+        if classifier_output[i] == true_labels[i]:
+            if true_labels[i] == 1:
+                matrix[0, 0] = matrix[0, 0] + 1  # True Positive
+            else:
+                matrix[1, 1] = matrix[1, 1] + 1  # True Negative
+
+        # If we classify incorrectly check for False Positive or False Negative
+        elif classifier_output[i] != true_labels[i]:
+            if true_labels[i] == 0:
+                matrix[1, 0] = matrix[1, 0] + 1  # False Positive
+            else:
+                matrix[0, 1] = matrix[0, 1] + 1  # False Negative
+
+    return matrix
     # raise NotImplemented()
 
 
@@ -142,6 +163,11 @@ def precision(classifier_output, true_labels):
     """
 
     # TODO: finish this.
+    matrix = confusion_matrix(classifier_output, true_labels)
+    true_positive = matrix[0, 0]
+    false_positive = matrix[1, 0]
+
+    return true_positive / (true_positive + false_positive)
     # raise NotImplemented()
 
 
