@@ -76,10 +76,29 @@ def build_decision_tree():
         The root node of the decision tree.
     """
 
-    decision_tree_root = None
+    decision_tree_root = DecisionNode(None, None, lambda a1: a1[0] == 0)
+    node_a2 = DecisionNode(None, None, lambda a2: a2[1] == 0)
+    node_a3 = DecisionNode(None, None, lambda a3: a3[2] == 0)
+    node_a4 = DecisionNode(None, None, lambda a4: a4[3] == 0)
+
+    # Build Root
+    decision_tree_root.left = node_a4
+    decision_tree_root.right = DecisionNode(None, None, None, 1)
+
+    # Build Left (A4)
+    node_a4.left = node_a3
+    node_a4.right = node_a2
+
+    # Build Left of A4 (A3)
+    node_a3.left = DecisionNode(None, None, None, 1)
+    node_a3.right = DecisionNode(None, None, None, 0)
+
+    # Build Right of A4 (A4)
+    node_a2.left = DecisionNode(None, None, None, 1)
+    node_a2.right = DecisionNode(None, None, None, 0)
 
     # TODO: finish this.
-    raise NotImplemented()
+    # raise NotImplemented()
 
     return decision_tree_root
 
@@ -97,7 +116,7 @@ def confusion_matrix(classifier_output, true_labels):
     """
 
     # TODO: finish this.
-    raise NotImplemented()
+    # raise NotImplemented()
 
 
 def precision(classifier_output, true_labels):
@@ -112,7 +131,7 @@ def precision(classifier_output, true_labels):
     """
 
     # TODO: finish this.
-    raise NotImplemented()
+    # raise NotImplemented()
 
 
 def recall(classifier_output, true_labels):
@@ -127,7 +146,7 @@ def recall(classifier_output, true_labels):
     """
 
     # TODO: finish this.
-    raise NotImplemented()
+    # raise NotImplemented()
 
 
 def accuracy(classifier_output, true_labels):
@@ -142,7 +161,7 @@ def accuracy(classifier_output, true_labels):
     """
 
     # TODO: finish this.
-    raise NotImplemented()
+    # raise NotImplemented()
 
 
 def gini_impurity(class_vector):
@@ -158,7 +177,7 @@ def gini_impurity(class_vector):
     Returns:
         Floating point number representing the gini impurity.
     """
-    raise NotImplemented()
+    # raise NotImplemented()
 
 
 def gini_gain(previous_classes, current_classes):
@@ -170,7 +189,7 @@ def gini_gain(previous_classes, current_classes):
     Returns:
         Floating point number representing the information gain.
     """
-    raise NotImplemented()
+    # raise NotImplemented()
 
 
 class DecisionTree:
@@ -206,7 +225,7 @@ class DecisionTree:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        # raise NotImplemented()
 
     def classify(self, features):
         """Use the fitted tree to classify a list of example features.
@@ -219,7 +238,7 @@ class DecisionTree:
         class_labels = []
 
         # TODO: finish this.
-        raise NotImplemented()
+        # raise NotImplemented()
         return class_labels
 
 
@@ -238,7 +257,7 @@ def generate_k_folds(dataset, k):
     """
 
     # TODO: finish this.
-    raise NotImplemented()
+    # raise NotImplemented()
 
 
 class RandomForest:
@@ -267,7 +286,7 @@ class RandomForest:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        # raise NotImplemented()
 
     def classify(self, features):
         """Classify a list of features based on the trained random forest.
@@ -276,7 +295,7 @@ class RandomForest:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        # raise NotImplemented()
 
 
 class ChallengeClassifier:
@@ -290,7 +309,7 @@ class ChallengeClassifier:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        # raise NotImplemented()
 
     def fit(self, features, classes):
         """Build the underlying tree(s).
@@ -301,7 +320,7 @@ class ChallengeClassifier:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        # raise NotImplemented()
 
     def classify(self, features):
         """Classify a list of features.
@@ -313,7 +332,7 @@ class ChallengeClassifier:
         """
 
         # TODO: finish this.
-        raise NotImplemented()
+        # raise NotImplemented()
 
 
 class Vectorization:
@@ -433,11 +452,11 @@ class Vectorization:
         data_np_flat = np.array(data).flatten()
         data_positive = data_np_flat[data_np_flat > 0.0]
         values, number_of_occurrences = np.unique(data_positive, return_counts=True)
-        list_of_occurences = []
+        list_of_occurrences = []
         for i in range(len(values)):
-            list_of_occurences.append((values[i], number_of_occurrences[i]))
+            list_of_occurrences.append((values[i], number_of_occurrences[i]))
 
-        return list_of_occurences
+        return list_of_occurrences
         # raise NotImplemented()
 
 
