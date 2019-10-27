@@ -223,6 +223,16 @@ def gini_impurity(class_vector):
     Returns:
         Floating point number representing the gini impurity.
     """
+    number_unique_class, number_counts = np.unique(class_vector, return_counts=True)
+    gini_impurity_for_class = []
+
+    for i in range(len(number_unique_class)):
+        # Calculate gini impurity for each class as p_i * (1 - p_i)
+        p_i = number_counts[i] / len(class_vector)
+        gini_impurity_for_class.append(p_i * (1.0 - p_i))
+
+    g_impurity = np.sum(gini_impurity_for_class)  # Total gini impurity is sum of gini impurity for each class
+    return g_impurity
     # raise NotImplemented()
 
 
@@ -235,6 +245,20 @@ def gini_gain(previous_classes, current_classes):
     Returns:
         Floating point number representing the information gain.
     """
+    g_impurity_previous = gini_impurity(previous_classes)
+
+    # Calculate size of future splits
+    total = 0.0
+    for i in range(len(current_classes)):
+        total = total + len(current_classes[i])
+
+    # Calculate gini impurity of each future split
+    gain = 0.0
+    for i in range(len(current_classes)):
+        g_impurity = gini_impurity(current_classes[i])
+        gain += (len(current_classes[i])/total) * g_impurity
+
+    return g_impurity_previous - gain
     # raise NotImplemented()
 
 
