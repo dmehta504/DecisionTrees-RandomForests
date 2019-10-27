@@ -75,6 +75,17 @@ def build_decision_tree():
     Returns:
         The root node of the decision tree.
     """
+    # Decision Tree
+    #              A1 == 0
+    #              /    \
+    #             /      \
+    #         A4 == 0     1
+    #           /  \
+    #          /    \
+    #         /      \
+    #     A3 == 0  A2 == 0
+    #       / \      /  \
+    #      1   0     1   0
 
     decision_tree_root = DecisionNode(None, None, lambda a1: a1[0] == 0)
     node_a2 = DecisionNode(None, None, lambda a2: a2[1] == 0)
@@ -93,7 +104,7 @@ def build_decision_tree():
     node_a3.left = DecisionNode(None, None, None, 1)
     node_a3.right = DecisionNode(None, None, None, 0)
 
-    # Build Right of A4 (A4)
+    # Build Right of A4 (A2)
     node_a2.left = DecisionNode(None, None, None, 1)
     node_a2.right = DecisionNode(None, None, None, 0)
 
