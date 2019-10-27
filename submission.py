@@ -252,6 +252,9 @@ def gini_gain(previous_classes, current_classes):
     for i in range(len(current_classes)):
         total = total + len(current_classes[i])
 
+    if total == 0:
+        return 0
+
     # Calculate gini impurity of each future class (split)
     gain = 0.0
     for i in range(len(current_classes)):
@@ -315,7 +318,10 @@ class DecisionTree:
             # Find the feature with the highest normalized Gini Gain
             best_index = self.select_splitval(features, classes)
             # Choose the split value as the mean of the best feature found to split on
-            alpha_best = np.mean(features[:, best_index])
+            alpha_best = np.median(features[:, best_index])
+            max_feature = np.max(features[:, best_index])
+            if max_feature == alpha_best:
+                return DecisionNode(None, None, None, int(np.mean(classes)))
 
             # Recursively build the left and right subtree
             root = DecisionNode(None, None, lambda feature: feature[best_index] <= alpha_best)
@@ -493,37 +499,73 @@ class ChallengeClassifier:
         """
 
         # TODO: finish this.
-        self.depth_limit = 7
-        self.num_trees = 20
-        self.example_subsample_rate = 0.6
-        self.attr_subsample_rate = 0.5
-        self.forest = RandomForest(self.num_trees, self.depth_limit,
-                                   self.example_subsample_rate, self.attr_subsample_rate)
+        self.trees = []
+        self.depth_limit = 8
+        self.num_trees = 10
+        self.example_subsample_rate = 0.4
+        self.attr_subsample_rate = 0.8
+        self.attributes_used = []  # Creating a list to track which attributes were used to train a specific tree
         # raise NotImplemented()
 
     def fit(self, features, classes):
-        """Build the underlying tree(s).
-            Fit your model to the provided features.
-        Args:
+        """Build a random forest of decision trees using Bootstrap Aggregation.
             features (m x n): m examples with n features.
             classes (m x 1): Array of Classes.
         """
 
         # TODO: finish this.
-        self.forest.fit(features, classes)
+        # Converting features and classes into numpy for slicing/indexing operations
+        features = np.asarray(features)
+        classes = np.asarray(classes)
+
+        for i in range(self.num_trees):
+            # Create an index array, then at random (w/ replacement) choose samples to create a training set
+            # Size of sample is based on example_subsample_rate
+            index_array = np.arange(0, features.shape[0], dtype=int)
+            sample_slice = np.random.choice(index_array, size=int(self.example_subsample_rate * features.shape[0]),
+                                            replace=True)
+            # Get the training features and classes for our subsample
+            train_classes = classes[sample_slice]
+            train_features = features[sample_slice]
+
+            # From above sample, choose attributes at random to learn on, size is based on attr_subsample_rate
+            attribute_slice = np.random.randint(features.shape[1],
+                                                size=int(self.attr_subsample_rate * features.shape[1]))
+            train_features = train_features[:, attribute_slice]
+
+            tree = DecisionTree(self.depth_limit)
+            tree.fit(train_features, train_classes)
+            self.trees.append(tree)
+            self.attributes_used.append(attribute_slice)
+
         # raise NotImplemented()
 
     def classify(self, features):
-        """Classify a list of features.
-        Classify each feature in features as either 0 or 1.
+        """Classify a list of features based on the trained random forest.
         Args:
             features (m x n): m examples with n features.
-        Returns:
-            A list of class labels.
         """
 
         # TODO: finish this.
-        return self.forest.classify(features)
+        votes = []
+        features = np.asarray(features)
+        # For each tree in the forest, get the classifications from each tree
+        # based on the features used to build tree
+        for i in range(self.num_trees):
+            tree = self.trees[i]
+            features_used = features[:, self.attributes_used[i]]
+            votes.append(tree.classify(features_used))
+
+        votes = np.array(votes)
+        classifications = []
+        # Based on the votes from each tree, return the class that most frequently appears
+        for i in range(len(features)):
+            classes = votes[:, i]
+            # class_val, class_count = np.unique(classes, return_counts=True)
+            # Get the classification that appears most frequently and add it to the list
+            classifications.append(np.mean(classes))
+
+        return classifications
         # raise NotImplemented()
 
 
