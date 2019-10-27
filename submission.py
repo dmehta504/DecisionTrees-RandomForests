@@ -493,6 +493,12 @@ class ChallengeClassifier:
         """
 
         # TODO: finish this.
+        self.depth_limit = 7
+        self.num_trees = 20
+        self.example_subsample_rate = 0.6
+        self.attr_subsample_rate = 0.5
+        self.forest = RandomForest(self.num_trees, self.depth_limit,
+                                   self.example_subsample_rate, self.attr_subsample_rate)
         # raise NotImplemented()
 
     def fit(self, features, classes):
@@ -504,6 +510,7 @@ class ChallengeClassifier:
         """
 
         # TODO: finish this.
+        self.forest.fit(features, classes)
         # raise NotImplemented()
 
     def classify(self, features):
@@ -516,6 +523,7 @@ class ChallengeClassifier:
         """
 
         # TODO: finish this.
+        return self.forest.classify(features)
         # raise NotImplemented()
 
 
