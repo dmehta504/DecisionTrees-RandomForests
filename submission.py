@@ -183,6 +183,11 @@ def recall(classifier_output, true_labels):
     """
 
     # TODO: finish this.
+    matrix = confusion_matrix(classifier_output, true_labels)
+    true_positive = matrix[0, 0]
+    false_negative = matrix[0, 1]
+
+    return true_positive / (true_positive + false_negative)
     # raise NotImplemented()
 
 
@@ -196,7 +201,11 @@ def accuracy(classifier_output, true_labels):
     Returns:
         The accuracy of the classifier output.
     """
+    matrix = confusion_matrix(classifier_output, true_labels)
+    true_positive = matrix[0, 0]
+    true_negative = matrix[1, 1]
 
+    return (true_positive + true_negative)/len(true_labels)
     # TODO: finish this.
     # raise NotImplemented()
 
