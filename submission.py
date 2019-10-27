@@ -419,6 +419,7 @@ class RandomForest:
         self.depth_limit = depth_limit
         self.example_subsample_rate = example_subsample_rate
         self.attr_subsample_rate = attr_subsample_rate
+        self.attributes_used = []
 
     def fit(self, features, classes):
         """Build a random forest of decision trees using Bootstrap Aggregation.
@@ -427,6 +428,22 @@ class RandomForest:
         """
 
         # TODO: finish this.
+        features = np.asarray(features)
+        classes = np.asarray(classes)
+        for i in range(self.num_trees):
+            index_array = np.arange(start=0, end=features.shape[0], dtype=int)
+            sample_slice = np.random.choice(index_array, size=int(self.example_subsample_rate * features.shape[0]),
+                                            replace=True)
+            train_classes = classes[sample_slice]
+            train_features = features[sample_slice]
+            attribute_slice = np.random.randint(features.shape[1], size=self.attr_subsample_rate * features.shape[1])
+            train_features = train_features[:, attribute_slice]
+
+            tree = DecisionTree(self.depth_limit)
+            tree.fit(train_features, train_classes)
+            self.trees.append(tree)
+            self.attributes_used.append(attribute_slice)
+
         # raise NotImplemented()
 
     def classify(self, features):
@@ -436,6 +453,20 @@ class RandomForest:
         """
 
         # TODO: finish this.
+        votes = []
+        features = np.asarray(features)
+        for i in range(self.num_trees):
+            tree = self.trees[i]
+            features_used = features[:, self.attributes_used[i]]
+            votes.append(tree.classify(features_used))
+
+        classifications = []
+        for i in range(len(features)):
+            classes = votes[:, i]
+            class_val, class_count = np.unique(classes, return_counts=True)
+            classifications.append(class_val[np.argmax(class_count)])
+
+        return classifications
         # raise NotImplemented()
 
 
