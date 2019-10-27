@@ -312,12 +312,15 @@ class DecisionTree:
             return DecisionNode(None, None, None, class_values[most_frequent_index])
 
         else:
+            # Find the feature with the highest normalized Gini Gain
             best_index = self.select_splitval(features, classes)
+            # Choose the split value as the mean of the best feature found to split on
             alpha_best = np.mean(features[:, best_index])
 
+            # Recursively build the left and right subtree
             root = DecisionNode(None, None, lambda feature: feature[best_index] <= alpha_best)
-            left_index = np.where(features[:, best_index] <= alpha_best)
-            right_index = np.where(features[:, best_index] > alpha_best)
+            left_index = np.where(features[:, best_index] <= alpha_best)  # Get the indices for left tree
+            right_index = np.where(features[:, best_index] > alpha_best)  # Get the indices for right tree
             root.left = self.__build_tree__(features[left_index], classes[left_index], depth + 1)
             root.right = self.__build_tree__(features[right_index], classes[right_index], depth + 1)
             return root
@@ -325,23 +328,21 @@ class DecisionTree:
 
     def select_splitval(self, features, classes):
         gain = []
-        dataset = np.column_stack((features, classes))
-        previous_classes = map(int, dataset[:, -1].tolist())
-        for i in range(len(dataset[0, :]) - 1):
-            feature = dataset[:, [i, -1]]
-            split = np.mean(feature[:, 0])
-            left_split = feature[feature[:, 0] <= split]
-            right_split = feature[feature[:, 0] > split]
-            current_classes = [map(int, left_split[:, -1].tolist()), map(int, right_split[:, -1].tolist())]
+        previous_classes = classes.tolist()
+
+        # For each feature in features, calculate the Gini Gain obtained by splitting on that feature
+        for i in range(features.shape[1]):
+            feature = features[:, i]
+            # Split on the median value for that particular feature, this ensures we split the data in half
+            split = np.median(feature)
+            left_split = np.where(feature[feature[:] <= split])
+            right_split = np.where(feature[feature[:] > split])
+            current_classes = [classes[left_split], classes[right_split]]
+            # Calculate the gini gain obtained by splitting on the selected feature
             gain.append(gini_gain(previous_classes, current_classes))
 
-        best_index = np.argmax(gain)
+        best_index = np.argmax(gain)  # Finds the index of the feature that has the highest Gini Gain
         return best_index
-
-
-
-
-
 
     def classify(self, features):
         """Use the fitted tree to classify a list of example features.
@@ -351,7 +352,7 @@ class DecisionTree:
             A list of class labels.
         """
 
-        class_labels = []
+        class_labels = [self.root.decide(feature) for feature in features]
 
         # TODO: finish this.
         # raise NotImplemented()
