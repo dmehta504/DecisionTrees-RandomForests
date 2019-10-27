@@ -298,8 +298,8 @@ class DecisionTree:
         # Check for termination
 
         # No more samples left i.e. no more X values remaining
-        if features.shape[0] == 0:
-            return DecisionNode(None, None, None, None)
+        if features.shape[0] <= 1:
+            return DecisionNode(None, None, None, int(np.mean(classes)))
 
         # If all classes are the same, then return the class
         if np.unique(classes).shape[0] == 1:
@@ -374,6 +374,30 @@ def generate_k_folds(dataset, k):
     """
 
     # TODO: finish this.
+    features = dataset[0]
+    classes = dataset[1]
+    num_of_bags = int(len(np.column_stack((features, classes))) / k)  # n // k i.e. number of samples in each bag
+    data = np.column_stack((features, classes))
+    folds = []
+    for i in range(k):
+        copy = np.copy(data)
+        np.random.shuffle(copy)  # Shuffle the data
+        # Create an index array
+        index_array = np.arange(0, features.shape[0], dtype=int)
+        # Create a slice to make a testing set with n // k data points
+        index_slice = np.random.choice(index_array, num_of_bags, replace=False)
+        test_data = copy[index_slice, :]
+        train_data = np.delete(copy, index_slice, 0)  # Delete the points used in testing set to get the training set
+        # Get the features
+        train_features = train_data[:, 0:-1]
+        test_features = test_data[:, 0:-1]
+        # Get the classes
+        train_classes = train_data[:, -1]
+        test_classes = test_data[:, -1]
+        # Add the fold i.e. (training set, testing set)
+        folds.append(((train_features, train_classes), (test_features, test_classes)))
+
+    return folds
     # raise NotImplemented()
 
 
