@@ -529,7 +529,7 @@ class ChallengeClassifier:
             train_features = features[sample_slice]
 
             # From above sample, choose attributes at random to learn on, size is based on attr_subsample_rate
-            attribute_slice = np.random.choice(range(0, len(features[0])),
+            attribute_slice = np.random.choice(range(0, features.shape[1]),
                                                size=int(self.attr_subsample_rate * features.shape[1]), replace=False)
 
             attribute_slice = np.sort(attribute_slice)
