@@ -226,6 +226,9 @@ def gini_impurity(class_vector):
     number_unique_class, number_counts = np.unique(class_vector, return_counts=True)
     gini_impurity_for_class = []
 
+    if len(class_vector) == 0:
+        return 0
+
     for i in range(len(number_unique_class)):
         # Calculate gini impurity for each class as p_i * (1 - p_i)
         p_i = number_counts[i] / len(class_vector)
@@ -302,7 +305,7 @@ class DecisionTree:
 
         # No more samples left i.e. no more X values remaining
         if features.shape[0] <= 1:
-            return DecisionNode(None, None, None, int(np.mean(classes)))
+            return DecisionNode(None, None, None, int(np.median(classes)))
 
         # If all classes are the same, then return the class
         if np.unique(classes).shape[0] == 1:
@@ -321,7 +324,7 @@ class DecisionTree:
             alpha_best = np.median(features[:, best_index])
             max_feature = np.max(features[:, best_index])
             if max_feature == alpha_best:
-                return DecisionNode(None, None, None, int(np.mean(classes)))
+                return DecisionNode(None, None, None, int(np.median(classes)))
 
             # Recursively build the left and right subtree
             root = DecisionNode(None, None, lambda feature: feature[best_index] <= alpha_best)
@@ -500,10 +503,10 @@ class ChallengeClassifier:
 
         # TODO: finish this.
         self.trees = []
-        self.depth_limit = 10
-        self.num_trees = 10
-        self.example_subsample_rate = 0.5
-        self.attr_subsample_rate = 0.9
+        self.depth_limit = 15
+        self.num_trees = 7
+        self.example_subsample_rate = 0.4
+        self.attr_subsample_rate = 0.8
         self.attributes_used = []  # Creating a list to track which attributes were used to train a specific tree
         # raise NotImplemented()
 
