@@ -503,9 +503,9 @@ class ChallengeClassifier:
 
         # TODO: finish this.
         self.trees = []
-        self.depth_limit = 15
-        self.num_trees = 7
-        self.example_subsample_rate = 0.4
+        self.depth_limit = 23
+        self.num_trees = 5
+        self.example_subsample_rate = 0.55
         self.attr_subsample_rate = 0.8
         self.attributes_used = []  # Creating a list to track which attributes were used to train a specific tree
         # raise NotImplemented()
