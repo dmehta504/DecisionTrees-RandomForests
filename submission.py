@@ -506,7 +506,7 @@ class ChallengeClassifier:
         self.depth_limit = 16
         self.num_trees = 16
         self.example_subsample_rate = 0.47
-        self.attr_subsample_rate = 0.70
+        self.attr_subsample_rate = 0.73
         self.attributes_used = []  # Creating a list to track which attributes were used to train a specific tree
         # raise NotImplemented()
 
