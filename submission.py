@@ -500,10 +500,10 @@ class ChallengeClassifier:
 
         # TODO: finish this.
         self.trees = []
-        self.depth_limit = 8
+        self.depth_limit = 4
         self.num_trees = 10
         self.example_subsample_rate = 0.4
-        self.attr_subsample_rate = 0.8
+        self.attr_subsample_rate = 0.9
         self.attributes_used = []  # Creating a list to track which attributes were used to train a specific tree
         # raise NotImplemented()
 
@@ -529,8 +529,10 @@ class ChallengeClassifier:
             train_features = features[sample_slice]
 
             # From above sample, choose attributes at random to learn on, size is based on attr_subsample_rate
-            attribute_slice = np.random.randint(features.shape[1],
-                                                size=int(self.attr_subsample_rate * features.shape[1]))
+            attribute_slice = np.random.choice(range(0, len(features[0])),
+                                               size=int(self.attr_subsample_rate * features.shape[1]), replace=False)
+
+            attribute_slice = np.sort(attribute_slice)
             train_features = train_features[:, attribute_slice]
 
             tree = DecisionTree(self.depth_limit)
@@ -561,9 +563,9 @@ class ChallengeClassifier:
         # Based on the votes from each tree, return the class that most frequently appears
         for i in range(len(features)):
             classes = votes[:, i]
-            # class_val, class_count = np.unique(classes, return_counts=True)
+            class_val, class_count = np.unique(classes, return_counts=True)
             # Get the classification that appears most frequently and add it to the list
-            classifications.append(np.mean(classes))
+            classifications.append(class_val[np.argmax(class_count)])
 
         return classifications
         # raise NotImplemented()
