@@ -321,7 +321,7 @@ class DecisionTree:
             # Find the feature with the highest normalized Gini Gain
             best_index = self.select_splitval(features, classes)
             # Choose the split value as the mean of the best feature found to split on
-            alpha_best = np.median(features[:, best_index])
+            alpha_best = np.mean(features[:, best_index])
             max_feature = np.max(features[:, best_index])
             if max_feature == alpha_best:
                 return DecisionNode(None, None, None, int(np.median(classes)))
@@ -503,10 +503,10 @@ class ChallengeClassifier:
 
         # TODO: finish this.
         self.trees = []
-        self.depth_limit = 19
+        self.depth_limit = 16
         self.num_trees = 16
         self.example_subsample_rate = 0.47
-        self.attr_subsample_rate = 0.77
+        self.attr_subsample_rate = 0.70
         self.attributes_used = []  # Creating a list to track which attributes were used to train a specific tree
         # raise NotImplemented()
 
